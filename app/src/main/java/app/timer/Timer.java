@@ -1,5 +1,6 @@
 package app.timer;
 
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -67,8 +68,26 @@ public class Timer extends ActionBarActivity {
 
     public void Start(View view)
     {
-        TextView textView = (TextView) findViewById(R.id.textViewTimer);
-        textView.setText("Started");
+        //TextView textView = (TextView) findViewById(R.id.textViewTimer);
+        //textView.setText("Started");
+
+
+        new CountDownTimer(30000, 1000)
+        {
+
+            public void onTick(long millisUntilFinished)
+            {
+                TextView textView = (TextView) findViewById(R.id.textViewTimer);
+                textView.setText("seconds remaining: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish()
+            {
+                TextView textView = (TextView) findViewById(R.id.textViewTimer);
+                textView.setText("done!");
+            }
+        }.start();
+
     }
 
 }
