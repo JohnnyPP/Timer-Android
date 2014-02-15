@@ -10,8 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.TextView;
 
 public class Timer extends ActionBarActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,12 @@ public class Timer extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_timer, container, false);
             return rootView;
         }
+    }
+
+    public void Start(View view)
+    {
+        TextView textView = (TextView) findViewById(R.id.textViewTimer);
+        textView.setText("Started");
     }
 
 }
