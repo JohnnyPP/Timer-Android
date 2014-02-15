@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Timer</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="TimerOutput">Timer</string>
     <string name="action_settings">Settings</string>
 
 </resources>
