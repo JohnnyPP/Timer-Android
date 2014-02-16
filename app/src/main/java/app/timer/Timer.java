@@ -1,6 +1,7 @@
 package app.timer;
 
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -11,11 +12,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.TimerTask;
+import android.os.Handler;
 
 public class Timer extends ActionBarActivity {
 
+    TextView textViewTimerValue;
+    TextView textView;
 
+    private long startTime = 0L;
+    private Handler customHandler = new Handler();
+
+    long timeInMilliseconds = 0L;
+    long timeSwapBuff = 0L;
+    long updatedTime = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +42,34 @@ public class Timer extends ActionBarActivity {
         }
     }
 
+    private Runnable updateTimerThread = new Runnable()
+    {
+        public void run()
+        {
+            try
+            {
+                textViewTimerValue = (TextView) findViewById(R.id.timerValue);
+
+                timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+
+                updatedTime = timeSwapBuff + timeInMilliseconds;
+
+                int secs = (int) (updatedTime / 1000);
+                int mins = secs / 60;
+                secs = secs % 60;
+                int milliseconds = (int) (updatedTime % 1000);
+                textViewTimerValue.setText("" + mins + ":"
+                        + String.format("%02d", secs) + ":"
+                        + String.format("%03d", milliseconds));
+                customHandler.postDelayed(this, 0);
+            }
+            catch (Exception e)
+            {
+                textViewTimerValue.setText("Error" + e);
+            }
+        }
+
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,26 +109,53 @@ public class Timer extends ActionBarActivity {
 
     public void Start(View view)
     {
-        //TextView textView = (TextView) findViewById(R.id.textViewTimer);
-        //textView.setText("Started");
-
-
         new CountDownTimer(30000, 1000)
         {
 
             public void onTick(long millisUntilFinished)
             {
-                TextView textView = (TextView) findViewById(R.id.textViewTimer);
+                textView = (TextView) findViewById(R.id.textViewTimer);
                 textView.setText("seconds remaining: " + millisUntilFinished / 1000);
             }
 
             public void onFinish()
             {
-                TextView textView = (TextView) findViewById(R.id.textViewTimer);
+                textView = (TextView) findViewById(R.id.textViewTimer);
                 textView.setText("done!");
             }
         }.start();
 
+    }
+
+    public void TimerStart(View view)
+    {
+        textView = (TextView) findViewById(R.id.timerValue);
+
+        try
+        {
+            startTime = SystemClock.uptimeMillis();
+            customHandler.postDelayed(updateTimerThread, 0);
+        }
+        catch (Exception e)
+        {
+            textView.setText("Error: " + e);
+        }
+
+    }
+
+    public void TimerPause()
+    {
+        textView = (TextView) findViewById(R.id.timerValue);
+
+        try
+        {
+            timeSwapBuff += timeInMilliseconds;
+            customHandler.removeCallbacks(updateTimerThread);
+        }
+        catch (Exception e)
+        {
+            textView.setText("Error: " + e);
+        }
     }
 
 }
